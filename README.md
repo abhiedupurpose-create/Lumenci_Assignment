@@ -32,6 +32,7 @@ Pick a **sample case** from the dropdown (three ready-made infringement cases), 
 - `docs/` — [plan](docs/1_Plan.md) · [PRD](docs/2_PRD.md) · [user flow diagram](docs/3_User_Flow.md) (rendered PNG in [docs/diagrams/](docs/diagrams/)) · [logic & decisions](docs/4_Logic_and_Decisions.md) · [handoff/deploy](docs/5_Handoff.md)
 - `scripts/` — `smoke_test.py` (47 backend checks, offline) · `ui_test.py` (20 headless UI checks) · `live_test.py` (3 real API calls) · `make_prd_docx.py`
 - `Task.md` — requirement checklist with review ratings
+- `test_kit/` — **real-world test scenario** recreating Honeywell v. Nest (2012): the actual US 7,142,948 patent claims, real product documentation excerpts (attributed; see [test_kit/README_TEST_GUIDE.md](test_kit/README_TEST_GUIDE.md)), and a deliberately flawed claim chart with a 15-minute effectiveness protocol — for testing and education only
 
 ## Tests
 

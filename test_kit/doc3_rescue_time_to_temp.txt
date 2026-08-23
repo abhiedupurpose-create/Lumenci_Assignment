@@ -1,0 +1,12 @@
+Nest Thermostat — Time-to-Temp feature note
+(Test file: paraphrased from Google's public Nest support documentation.
+Upload this ONLY when the AI asks for evidence it cannot find — it completes
+the "no evidence → analyst provides a document" rescue loop.)
+
+Time-to-Temp shows an estimate of how long it will take your home to reach
+the target temperature after you change it. When you set a new target
+temperature, the thermostat display shows a message such as "IN 20 MINS",
+counting down the duration of time until the home reaches the new set point.
+The estimate updates while the heating or cooling system runs, so during the
+temperature change the user can see when the desired temperature is
+anticipated to be reached.

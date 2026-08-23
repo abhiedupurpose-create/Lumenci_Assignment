@@ -1,0 +1,29 @@
+REFERENCE ONLY — do not upload to the app.
+The app consumes the claim chart + product documents; the patent is what the
+analyst reads to WRITE the chart's "Patent Claim Element" column. The four
+elements in claim_chart_US7142948_vs_Nest.csv were derived from the claims
+below.
+
+US 7,142,948 B2 — "Controller interface with dynamic schedule display"
+Assignee: Honeywell International Inc.
+Source: https://patents.google.com/patent/US7142948B2/en
+Context: one of the patents Honeywell asserted against Nest Labs in
+Honeywell v. Nest Labs / Best Buy (D. Minn., filed Feb 2012) — the real
+lawsuit this test scenario recreates.
+
+Claim 1. A method comprising the steps of:
+  operating a programmable controller to cause an HVAC system to change an
+  environmental condition of an inside space from a first initial set point
+  to a second desired set point, the HVAC system achieving the change in the
+  environmental condition to the second desired set point in an amount of
+  time; and
+  providing a message during the amount of time indicating when the desired
+  second set point is anticipated to be achieved in the inside space.
+
+Claim 3. The method according to claim 1, wherein the providing a message
+  comprises providing a message of a duration of time until the desired
+  second set point is anticipated to be achieved in the inside space.
+
+Claim 4. The method according to claim 1, wherein the providing a message
+  comprises providing a message of a time of day when the desired second set
+  point is anticipated to be achieved in the inside space.

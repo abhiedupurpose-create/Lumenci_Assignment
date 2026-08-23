@@ -1,0 +1,22 @@
+Nest Learning Thermostat — feature descriptions (brief excerpts)
+Source: nest.com "Living with Nest" page (Nest Labs, 2013), retrieved via the
+Internet Archive Wayback Machine (web.archive.org).
+Excerpted minimally for software testing and education (recreating evidence
+from the publicly documented Honeywell v. Nest litigation, 2012). All text
+belongs to its owner (Google/Nest); no affiliation or endorsement implied.
+
+Most people leave the house at one temperature and forget to change it. So the Nest Learning Thermostat learns your schedule, programs itself and can be controlled from your phone. Teach it well and the Nest Thermostat can lower your heating and cooling bills up to 20%.
+
+Just turn it up and turn it down. The Nest Thermostat learns what temperatures you like and builds a personalized schedule. Teach it efficient temperatures for a few days and, within a week, it'll start setting them on its own.
+
+With Auto-Away™, the Nest Thermostat automatically turns to an energy-efficient Away temperature when you’re gone.
+
+Auto-Away works in 90% of homes, even if your Nest is in a spot you don't pass on your way out the door.
+
+The Nest Leaf™ appears when you're saving energy. Changing the temperature just one degree can cut your energy use up to 5%. The Leaf guides you in the right direction.
+
+Now you can see exactly when Nest was on in your home. Turn the temp down from 70° to 68°, then check Energy History the next day. You’ll see how much energy you saved and why.
+
+Then Airwave™ can help lower your AC bill. It automatically cuts AC runtime when humidity in your home isn’t too high.
+
+Auto-Schedule makes it easy to create an energy efficient schedule that can help you save up to 20% on your heating and cooling bills. All the Nest Thermostat's features combined can get you even bigger savings.

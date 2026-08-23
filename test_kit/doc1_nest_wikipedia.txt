@@ -1,0 +1,59 @@
+Nest Thermostat — text excerpts from Wikipedia
+Source: https://en.wikipedia.org/wiki/Nest_Thermostat (retrieved 2026-08-24)
+License: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0) —
+https://creativecommons.org/licenses/by-sa/4.0/ — text by Wikipedia contributors,
+redistributed here with attribution under the same license.
+
+Nest ThermostatThe Nest Thermostat's front screenDeveloperGoogle NestTypeSmart thermostatReleased2011; 15 years ago (2011)WebsiteOfficial website
+
+The Nest Thermostat is a smart thermostat developed by Google Nest and designed by Tony Fadell, Ben Filson, and Fred Bould.[1] It is an electronic, programmable, and self-learning Wi-Fi-enabled thermostat that optimizes heating and cooling of homes and businesses to conserve energy.[2]
+
+The Google Nest Learning Thermostat is based on a machine learning algorithm: for the first weeks users have to regulate the thermostat in order to provide the reference data set. The thermostat can then learn people's schedule, at which temperature they are used to and when.[3] Using built-in sensors and phones' locations, it can shift into energy-saving mode when it realizes nobody is at home.[4][5]
+
+DevicephotoGenerationVersionReleasedDiameterScreen sizeWi-Fi802.15.4Matter24 V120–240 VMultiplezones1–2-stagecooling1–3-stageheatingForcedairRadiantHeatpumpOilGasElectricHybridsystemsHumidistat
+
+Note: Generation E and new thermostat supports two stage cooling OR two stage heating OR heatpump due to a shared multi-use terminal.
+
+Nest is compatible with most standard HVAC systems that use central heating and cooling and uses industry standard connections to facilitate the control of these appliances.[10]
+
+Nest is not compatible with communicating HVAC systems. Communicating systems are used with some two-stage and all variable-capacity HVAC systems. These systems require just four wires – two power wires for heating and cooling and two for communication between components (see photo).[11]
+
+Nest consists of two primary pieces of hardware. The display contains the main printed circuit board (PCB) and rotating ring (except for the 2020 Nest Thermostat, which has a touch-sensitive strip on the right side of the thermostat body). The base houses the connection terminals, bubble level, and holes for wall anchors. Neither can function independently; if separated, the display becomes inactive until reconnected to the base.[12]
+
+A special version of Nest is available in Europe, which is capable of controlling 230 volt heating systems. The Nest is paired with a "Heat Link" device, which contains the circuitry required for controlling the mains-voltage heating system. The first release was the 2nd Generation Nest thermostat which the Heat Link controlled the central heating boiler.[13] The 3rd Generation added support for OpenTherm and for controlling domestic hot water.[14] The Nest E was made available to the UK in October 2018.[15] It has several major changes as the thermostat is stand mounted only, the Heat Link is grey and battery powered, the Heat Link loses the domestic hot water support, and lastly designed to be installed on the wall where the old thermostat was located.[16]
+
+As the Nest Thermostat cannot be battery operated, it must either be installed with a wire connecting directly to the "Heatlink" which supplies 12v DC, or mounted on a Stand and powered via a USB cable.[17]
+
+The Nest Temperature Sensor was added in March 2018. Available in Google Store only for United States and Canada.[18] Up to six of these battery operated devices can be added to a single thermostat to provide remote temperature monitoring. Nest will then use the appropriate sensor based on schedule. Since they use Bluetooth Low Energy they are only compatible with the E and 3rd generation thermostats.[19]
+
+With the introduction of the more accessible Google Nest Thermostat on October 12, 2020, it no longer features the rotating ring which is present on other Nest models. It instead uses a touch-sensitive strip on the right side of the thermostat body to adjust temperatures and navigate the thermostat's operating system, with tapping on the touch-sensitive strip replacing physical clicking. It also features presence detection which uses Google ATAP's 60 GHz Project Soli radar,[20] which allows the mirror-like face of the Nest Thermostat to have no visible cutouts for the radar sensor. This enables the thermostat to display the current HVAC status when human presence is detected by the Soli radar sensor.[21] However, Nest Farsight is not supported on this model but poses a similar function at closer distances.
+
+The Nest Thermostat is built around an operating system that allows interaction with the thermostat via spinning and clicking of its control wheel, with sliding and tapping being the input method for the 2020 Nest Thermostat, which brings up option menus for switching from heating to cooling, access to device settings, energy history, and scheduling. Scheduling cannot be modified on the 2020 Nest Thermostat device and must be done in the Google Home app.[22] Users can control Nest without a touch screen or other input device. As the thermostat is connected to the Internet, the company can push updates to fix bugs, improve performance and add additional features. For updates to occur automatically, the thermostat must be connected to Wi‑Fi and the battery must have at least a 3.7 V charge to give enough power to complete the download and installation of the update.[23]
+
+The Nest Thermostat has had a number of software updates.[24] A 2017 security update enables two factor authentication.[25]
+
+To comply with the terms of the GPLv3 license under which some components are available, Nest Labs also provides a special firmware image which will unlock the system so that it will accept arbitrary code sent to it.
+
+Nest devices interconnect with each other using a protocol called Weave, which is based on IEEE 802.15.4 and Wi-Fi 802.11 b/g/n.[27]
+
+Starting April 18, 2023 Google Nest G4CVZ Thermostats will be receiving an update to enable Matter connectivity. As of January 2024, only the latest Generation 4 Thermostat currently has this capability.[28]
+
+Nest is available for sale in the United States, Canada, Mexico, the United Kingdom, Belgium, France, Ireland, the Netherlands, Germany, Austria, Italy, and Spain.[29] It is, however, compatible with many heating and cooling automation systems in other countries.[30] Nest Labs have surveyed existing users known to be outside the areas where it is officially available. Use of the thermostat outside the United States and Canada is complicated by the software setting time and other functions based on the ZIP code. For international users this means they must either disable Wi‑Fi to set the time correctly or use the nearest U.S. zipcode which may result in erratic behavior as the thermostat makes faulty assumptions about inactivity corresponding with either sleep or the home's occupants being away.[31]
+
+In April 2025, Google announced they would no longer launch new Nest thermostats in Europe, citing challenges with building for a "diverse set of homes".[33]
+
+In an effort to increase the number of homes using their learning thermostats, Nest began to partner with energy companies. In February 2014, Direct Energy and Nest laboratories launched their Comfort and Control plan. The plan allowed Canadian customers in Alberta to receive a learning thermostat when they signed up for a five-year electricity contract.[34] In April 2014, Nest announced a partnership with the United Kingdom energy supplier nPower. The partnership offers customers a cut on the Nest installation price and locked energy prices for 5 years, when customers receive both gas and electricity from nPower and paying with direct debit.[35]
+
+↑ Yarrow, Jay. "Meet The Unknown Genius Who Helped Design The $3.2 Billion Nest Thermostat And Smoke Detector". Business Insider. Retrieved November 8, 2017.
+
+↑ Commons, Marcela Gara / Resource Media via Creative. "In Illinois, smart thermostats seen as key energy management tool". Midwest Energy News. Retrieved August 5, 2017.
+
+↑ "Nest thermostat technical specifications - Google Nest Help". support.google.com. Archived from the original on October 17, 2020.
+
+1 2 "Upcoming end of support for Nest Learning Thermostats (1st and 2nd gen)". support.google.com. Archived from the original on July 30, 2025.
+
+↑ Schoon, Ben (August 6, 2024). "Google's Nest Learning Thermostat is getting a major revamp after nearly a decade". 9to5Google.
+
+↑ "Nest Thermostat (2020) FCC Documentation". Office of Engineering and Technology. August 25, 2020. Retrieved December 11, 2020.
+
+↑ Seifert, Dan (October 12, 2020). "Google's Nest announces new smart thermostat with simpler design, lower price". The Verge. Retrieved December 11,
