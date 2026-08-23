@@ -1,7 +1,7 @@
 # Pinned to the locally-verified stack (live API test passes on these exact
-# versions) so Streamlit Cloud reproduces it 1:1.
+# versions) so Streamlit Cloud reproduces it 1:1. The LLM is called over
+# plain REST (requests) — no SDK dependency.
 streamlit==1.62.0
-openai==3.3.1
 python-dotenv==1.2.3
 python-docx==1.2.0
 pandas==3.0.5

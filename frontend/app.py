@@ -30,7 +30,7 @@ from frontend.components.setup import (render_evidence_tab,
 from frontend.styles import brand_header, inject_styles
 
 _DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
-APP_BUILD = "2026-08-23.8"  # bumped on deploy-relevant changes
+APP_BUILD = "2026-08-23.9"  # bumped on deploy-relevant changes
 
 
 def _render_debug() -> None:
