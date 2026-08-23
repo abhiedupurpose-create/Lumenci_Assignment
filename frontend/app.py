@@ -41,8 +41,9 @@ def _init_state() -> None:
     ss.setdefault("system_prompt", DEFAULT_SYSTEM_PROMPT)
     ss.setdefault("processed_docs", set())
     ss.setdefault("view", "home")
-    # No API key configured → the scripted demo engine answers (labeled in chat).
-    ss.setdefault("demo_mode", not get_settings().llm_configured)
+    # Purely derived (no user toggle exists): recomputed every run so a key
+    # that becomes visible after startup flips the session to live mode.
+    ss.demo_mode = not get_settings().llm_configured
 
 
 def _nav(view: str) -> None:

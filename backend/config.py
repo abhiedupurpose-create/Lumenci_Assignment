@@ -47,8 +47,22 @@ def _load_streamlit_secrets() -> dict:
 _secrets = _load_streamlit_secrets()
 
 
+def _from_st_secrets(key: str) -> str:
+    """Last-resort lookup through st.secrets — the canonical (and on Streamlit
+    Community Cloud, the only reliable) way dashboard secrets are delivered.
+    Imported lazily so the backend stays usable without Streamlit installed."""
+    try:
+        import streamlit as st
+        return str(st.secrets.get(key, "") or "")
+    except Exception:
+        return ""
+
+
 def _get(key: str, default: str = "") -> str:
-    return (os.environ.get(key) or str(_secrets.get(key, "") or "") or default).strip()
+    return (os.environ.get(key)
+            or str(_secrets.get(key, "") or "")
+            or _from_st_secrets(key)
+            or default).strip()
 
 
 @dataclass(frozen=True)
