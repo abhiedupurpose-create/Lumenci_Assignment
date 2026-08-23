@@ -30,7 +30,7 @@ from frontend.components.setup import (render_evidence_tab,
 from frontend.styles import brand_header, inject_styles
 
 _DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
-APP_BUILD = "2026-08-23.6"  # bumped on deploy-relevant changes
+APP_BUILD = "2026-08-23.7"  # bumped on deploy-relevant changes
 
 
 def _render_debug() -> None:
@@ -66,6 +66,30 @@ def _render_debug() -> None:
                 st.success(f"Live call OK — model replied: {out[:120]}")
             except LLMError as exc:
                 st.error(f"Live call FAILED: {exc}")
+        if st.button("🌐 Network probe (DNS + reachability)"):
+            import socket
+            host = (s.base_url or "https://api.openai.com").split("//")[-1].split("/")[0]
+            report = {}
+            try:
+                families = {a[0].name for a in socket.getaddrinfo(host, 443)}
+                report["dns"] = f"{host} → {sorted(families)}"
+            except Exception as exc:
+                report["dns"] = f"FAILED: {exc}"
+            for name, fn in (("requests(urllib3)", "requests"), ("httpx", "httpx")):
+                try:
+                    if fn == "requests":
+                        import requests
+                        r = requests.get(f"https://{host}/v1/models", timeout=10)
+                        code = r.status_code
+                    else:
+                        import httpx
+                        code = httpx.get(f"https://{host}/v1/models",
+                                         timeout=10).status_code
+                    report[name] = (f"reached endpoint (HTTP {code} — 401 here "
+                                    "means connectivity is fine)")
+                except Exception as exc:
+                    report[name] = f"FAILED: {type(exc).__name__}: {exc}"
+            st.write(report)
 
 
 def _init_state() -> None:

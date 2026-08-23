@@ -25,6 +25,16 @@ class LLMClient:
         kwargs = {"api_key": settings.api_key, "timeout": 60.0, "max_retries": 1}
         if settings.base_url:
             kwargs["base_url"] = settings.base_url
+        # Some hosted containers (e.g. Streamlit Community Cloud) resolve the
+        # API host to IPv6 but can't route it, which surfaces as a bare
+        # "Connection error.". Binding the local side to 0.0.0.0 forces IPv4.
+        try:
+            import httpx
+            kwargs["http_client"] = httpx.Client(
+                transport=httpx.HTTPTransport(local_address="0.0.0.0", retries=2),
+                timeout=60.0)
+        except Exception:
+            pass  # fall back to the SDK's default client
         self._client = OpenAI(**kwargs)
         self._model = settings.model
 
