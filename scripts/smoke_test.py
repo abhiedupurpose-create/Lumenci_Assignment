@@ -212,7 +212,18 @@ check("viewing an old version is read-only display",
 store.return_to_latest()
 check("return to latest clears view mode", not store.is_viewing_old)
 
-# 13. Export
+# 13. Live-LLM failure degrades to a grounded fallback answer (never a dead end)
+from backend.config import Settings
+
+bad_settings = Settings(api_key="sk-test-000000000000",
+                        base_url="http://127.0.0.1:9", model="nope")
+fr = respond("Strengthen the evidence for element 2", demo_mode=False,
+             system_prompt=DEFAULT_SYSTEM_PROMPT, store=store, docs=docs,
+             history=history, metrics=metrics, settings=bad_settings)
+check("LLM failure falls back to grounded engine",
+      "fallback engine" in fr.reply and metrics.llm_failures >= 1)
+
+# 14. Export
 data = export_docx(store)
 check("docx exported", data[:2] == b"PK" and len(data) > 2000)
 check("export filename derived safely",

@@ -30,14 +30,14 @@ Pick a **sample case** from the dropdown (three ready-made infringement cases), 
 - `backend/` — all logic, pure Python: engines, grounding, versioning, parsing, export
 - `prompts/` — **every LLM prompt as a reviewable file** (system prompt, JSON output contract, context template) — see [prompts/README.md](prompts/README.md)
 - `docs/` — [plan](docs/1_Plan.md) · [PRD](docs/2_PRD.md) · [user flow diagram](docs/3_User_Flow.md) (rendered PNG in [docs/diagrams/](docs/diagrams/)) · [logic & decisions](docs/4_Logic_and_Decisions.md) · [handoff/deploy](docs/5_Handoff.md)
-- `scripts/` — `smoke_test.py` (35 backend checks, offline) · `ui_test.py` (16 headless UI checks) · `make_prd_docx.py`
+- `scripts/` — `smoke_test.py` (47 backend checks, offline) · `ui_test.py` (20 headless UI checks) · `live_test.py` (3 real API calls) · `make_prd_docx.py`
 - `Task.md` — requirement checklist with review ratings
 
 ## Tests
 
 ```bash
-python scripts/smoke_test.py   # 35 backend checks — refinement loop, edge cases, guards, export
-python scripts/ui_test.py      # 16 checks driving the real UI headlessly
+python scripts/smoke_test.py   # 47 backend checks — refinement loop, edge cases, versions, guards
+python scripts/ui_test.py      # 20 checks driving the real UI headlessly
 ```
 
 Deployment to Streamlit Community Cloud: see [docs/5_Handoff.md](docs/5_Handoff.md).

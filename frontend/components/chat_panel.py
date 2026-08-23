@@ -136,8 +136,8 @@ def _render_suggestion(sug: Suggestion) -> None:
 
         if sug.action == "needs_input":
             st.markdown(sug.needs_from_user or sug.rationale)
-            st.caption("📎 Use **Product documents** or **Fetch evidence from URL** "
-                       "in the sidebar, then ask me again.")
+            st.caption("📎 Add a document or fetch a URL in the **Evidence tab**, "
+                       "then ask me again.")
             return
 
         row = store.current.get_row(sug.target_row_id) if sug.target_row_id else None

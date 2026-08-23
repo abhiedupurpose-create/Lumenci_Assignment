@@ -139,17 +139,24 @@ unrelated weak row instead of honestly reporting "no evidence".
 | 2026-08-23 | **Audit round (41 findings, 6 role-matched reviewers + adversarial verification):** undo intent narrowed to short imperatives (was a data-loss false-positive); XML-invalid control chars stripped at parse + export (was a page-bricking crash); grounding minimums raised to ≥4 words / ≥20 chars with doc-name correction (was trivially gameable); decision guards for orphaned/double-clicked suggestions (was an uncaught crash + corrupted metrics); upload dedup keyed on file_id and reset on sample load (was silently eating re-uploads); Modify-form edits compared against seeds so deletions count; before/after diff given background chips (dark-theme legibility); export bytes cached per version (was rebuilt every rerun); view-layer logic moved behind ChartStore/exporter helpers; column mapping refuses partial alias+position mixes; URL fetch hardened (scheme case, content-type, private hosts) with pool dedup + remove controls; `.xls` dropped (xlrd never shipped); LLM client timeout 60s/1 retry; unlabeled demo fallback now announces itself; PRD typeset for one page + italics fixed in the converter | Every reviewer finding ≥ minor severity closed; both test suites extended with regressions and passing |
 | 2026-08-23 | Prompts extracted to `prompts/` (system prompt, output contract with worked example, context template) + `backend/prompts.py` loader | User requirement: prompts reviewable in one place, enterprise-grade structure, rated ≥9/10 |
 | 2026-08-23 | Brand restyle to ilumos.ai identity; user-flow diagram re-laid-out (straight highlighted trunk, junction dots, explicit reject fork) | Design parity with the real product; grader-reported label ambiguity fixed |
+| 2026-08-23 | **Final recruiter-perspective audit:** LLM failures now auto-fall back to the grounded built-in engine (previous copy dead-ended graders at a removed Demo toggle); all stale "sidebar" references fixed (needs-input card, chat caption, prompts README); dead `engine_status` removed; diagram updated (initial-analysis node, view/restore in the undo box); PRD updated (version view/restore + "restore to vN" assumption) and re-verified one page in Word; handoff video script re-timed to the current UI | Zero drift between docs, diagram, PRD, and the shipped app before submission |
 | 2026-08-23 | **UI v2 (final-product pass, per Abhinav):** sidebar removed — onboarding screen with a **3-case sample dropdown** (Acme thermostat, VoltEdge scooter, NimbusCam camera), then chart + tabbed right pane (Chat / Evidence / Settings); engine-status pill and demo toggle removed from UI (auto-fallback stays, labeled in chat); analyst instructions moved into Settings → Advanced expander (kept — the brief grades "setting system prompts"); tooltips on every control; export button degrades gracefully (disabled + hint) if python-docx is missing instead of crashing the page (root cause of the reported crash: app launched outside the venv) | Cleaner "final product" UI; sample dropdown enables instant testing without files; crash-proof export |
 
 ## 7. Verification
 
-- `scripts/smoke_test.py` — 35 offline checks: full refinement loop, all 3 edge cases,
-  grounding rigor (fabricated / single-word / misattributed quotes), undo-intent
-  precision, orphaned-suggestion guards, typed accept, control-char sanitization,
-  tolerant JSON parsing, CSV parsing, docx export, metrics.
-- `scripts/ui_test.py` — 16 checks driving the real Streamlit app headlessly (AppTest):
-  onboarding → sample load → chat → accept → highlight → undo-via-chat → needs-input.
-- Both suites pass: **ALL PASSED**.
+- `scripts/smoke_test.py` — 47 offline checks: full refinement loop, all 3 edge cases,
+  grounding rigor (fabricated / single-word / misattributed quotes), undo/restore/diff
+  intent precision, version view/restore, orphaned-suggestion guards, typed accept,
+  strength no-downgrade, LLM-failure fallback, control-char sanitization, tolerant
+  JSON parsing, CSV parsing, docx export, metrics.
+- `scripts/ui_test.py` — 20 checks driving the real Streamlit app headlessly (AppTest):
+  onboarding → sample load → analysis → chat → accept → highlight → undo-via-chat →
+  needs-input → home navigation → case switch.
+- `scripts/live_test.py` — 3 real API calls against gpt-5.6-luna (grounded revision,
+  add/revise, no-fabrication needs_input) with pass/fail checks.
+- Browser E2E (puppeteer + headless Chrome, demo mode): 37 checks including version
+  view/restore, typed decisions, URL scraping, and navigation.
+- All suites pass: **ALL PASSED**.
 
 ## 8. Known limitations (deliberate, prototype scope)
 

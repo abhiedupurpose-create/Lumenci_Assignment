@@ -97,9 +97,9 @@ def _needs_input(topic: str) -> EngineResponse:
                        "Fabricating evidence would be worse than a gap."),
             confidence="low",
             needs_from_user=("Upload technical documentation (spec sheet, developer "
-                             "docs, teardown report) via the sidebar, or paste a "
-                             "product-page URL in the sidebar's 'Fetch evidence from "
-                             "URL' box and I'll scrape it for evidence."),
+                             "docs, teardown report) in the Evidence tab, or paste a "
+                             "product-page URL there in 'Fetch evidence from a URL' "
+                             "and I'll scrape it for evidence."),
         )],
     )
 

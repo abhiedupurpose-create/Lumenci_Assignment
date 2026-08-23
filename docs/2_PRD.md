@@ -28,7 +28,7 @@ refine charts where **every change is evidence-backed and analyst-approved**.
 ## Core Features
 
 **MVP — Input:** chart upload (CSV/XLSX/JSON) + one-click sample · product docs (TXT/MD/PDF) + URL fetch · editable system prompt.
-**MVP — Refinement loop:** chat suggestions as cards (before/after diff, rationale, confidence, citations) · accept / modify / reject via buttons or typed reply · version history with undo (button or "undo" in chat).
+**MVP — Refinement loop:** chat suggestions as cards (before/after diff, rationale, confidence, citations) · accept / modify / reject via buttons or typed reply · version history: view/restore any version, undo, and "what changed" diffs via chat.
 **MVP — Trust & safety:** verbatim-grounding check with ⚠ flag on unverified quotes · evidence-strength badges per row · changed-cell highlighting · scripted demo mode when no API key.
 **MVP — Output:** Word (.docx) export with change-log appendix · live session metrics (acceptance, grounded rate).
 **Out of scope (v1):** auth & collaboration · cross-session persistence · scanned-PDF OCR · multi-chart projects · semantic retrieval · tracked-changes redlines in Word · legal research.
@@ -51,4 +51,4 @@ refine charts where **every change is evidence-backed and analyst-approved**.
 
 ## Documented Assumptions
 
-**Conversational patterns:** analysts reference elements by number or name in plain English; one refinement intent per message; short imperatives ("undo", "accept") are deterministic commands, not LLM calls. **Infrastructure:** gpt-5.6-luna reachable via an OpenAI-compatible endpoint; charts arrive as clean 3-column tables; documents are text-extractable; one chart per session.
+**Conversational patterns:** analysts reference elements by number or name in plain English; one refinement intent per message; short imperatives ("undo", "accept", "restore to v2") are deterministic commands, not LLM calls. **Infrastructure:** gpt-5.6-luna reachable via an OpenAI-compatible endpoint; charts arrive as clean 3-column tables; documents are text-extractable; one chart per session.

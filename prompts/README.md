@@ -8,7 +8,7 @@ running session.
 
 | File | Purpose | Consumed by | Placeholders |
 |------|---------|-------------|--------------|
-| `system_prompt.md` | Default analyst instructions: role, objective, evidence discipline, escalation policy, scope, tone. **This is the editable "Analyst instructions" shown in the app sidebar** — the analyst can override it per session. | `backend/sample_data.py` → sidebar | none |
+| `system_prompt.md` | Default analyst instructions: role, objective, evidence discipline, escalation policy, scope, tone. **This is the editable "AI instructions" panel on the app's Home screen** — the analyst can override it per session. | `backend/sample_data.py` → Home setup | none |
 | `output_contract.md` | The mandatory JSON output specification: full field-by-field schema, six hard rules (verbatim citations, needs_input escalation, valid targets, minimal diffs, honest confidence, correction handling), and one worked example. Appended by the engine to every request — the analyst cannot accidentally remove it by editing the system prompt. | `backend/refinement_engine.py` | none |
 | `context_template.md` | Assembly skeleton for the system message: analyst instructions + output contract + numbered chart + evidence documents, with hard section delimiters. | `backend/refinement_engine.build_messages` | `{{SYSTEM_PROMPT}}` `{{OUTPUT_CONTRACT}}` `{{CLAIM_CHART}}` `{{DOCUMENTS}}` |
 

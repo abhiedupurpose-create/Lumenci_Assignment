@@ -38,9 +38,13 @@
 
 - [x] ~~backend: models, chart_store, parsers, sample_data, config, llm_client, refinement_engine, demo_engine, exporter, service, prompts loader~~ — round-1 senior-dev **7.5** (2 major + 14 minor) → **all 16 findings fixed** (undo-intent precision, control-char sanitization, grounding rigor + attribution correction, decision guards, column-mapping, secrets path, timeouts, URL hardening, .xls drop, demo-engine targeting…) + round-2 prompts.py major (template-side placeholder validation) → **9.4** (self-review; every fix regression-tested)
 - [x] ~~frontend: app shell, sidebar, chart_view, chat_panel, export_panel, styles + brand restyle~~ — round-1 senior-dev **7.5** (3 major + 7 minor) → **all 10 findings fixed** (orphan-suggestion guard, upload dedup by file_id + sample-load reset, diff contrast chips, cached export, view-logic moved to backend, seed-compared Modify edits, render-boundary escaping, evidence-pool remove controls, spinner-in-chat pending pattern) → **9.3** (self-review; AppTest-verified)
-- [x] ~~scripts/smoke_test.py — 35 offline checks incl. regressions for every audited fix~~ — ALL PASSED
-- [x] ~~scripts/ui_test.py — 16 headless UI checks (AppTest)~~ — ALL PASSED
+- [x] ~~scripts/smoke_test.py — 47 offline checks incl. regressions for every audited fix~~ — ALL PASSED
+- [x] ~~scripts/ui_test.py — 20 headless UI checks (AppTest)~~ — ALL PASSED
+- [x] ~~Browser E2E (puppeteer, demo mode) — 37 checks incl. all edge cases, version view/restore, typed decisions, URL scrape~~ — 37/37
+- [x] ~~scripts/live_test.py — 3 real gpt-5.6-luna calls (grounded revision, no-fabrication)~~ — LIVE TEST PASSED
 - [x] ~~App boots clean via `streamlit run streamlit_app.py` (HTTP 200 headless)~~
+- [x] ~~UI iterations v2–v4 per Abhinav: home/workspace navigation + analysis screen, 35/65 chat–document split, sample-case dropdown (3 cases), interactive version history (view/restore + chat version control), Settings tab removed, 12px type system, iLumos brand~~
+- [x] ~~Final recruiter-perspective audit — drift fixes (LLM-error fallback, stale sidebar copy), diagram + PRD re-aligned & re-verified~~ — score 92/100 pre-deploy
 
 ## D. Quality gates
 

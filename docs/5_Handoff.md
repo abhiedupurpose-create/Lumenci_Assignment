@@ -86,11 +86,11 @@ reviewable files in `prompts/` — edit them there, not in code.
 > a URL instead of inventing a quote. The final chart exports to Word with a change log."
 
 **0:55–2:50 — Prototype demo (share the app)**
-1. *(0:55)* Onboarding screen → pick a case from the **sample dropdown** → **Load sample case**. Mention custom chart/doc uploads work the same way, and analyst instructions live under Settings → Advanced.
+1. *(0:55)* Home screen → point at the **AI instructions** panel (the no-fabrication rules — "enforced downstream by the grounding checker") → pick a case from the **sample dropdown** → **Load sample case** → the **analysis screen** flags weak elements automatically.
 2. *(1:15)* Send the assignment's example: **"The AI reasoning for the ML algorithm element is weak — add more technical details."** Show the suggestion card: before/after diff, rationale, confidence, **✓ quotes verified in docs**.
-3. *(1:45)* Click **Accept** → chart cells highlight green, version counter ticks. Open "What changed". (Session metrics live under Settings.)
-4. *(2:05)* Send **"You missed that Acme also has a temperature sensor array"** → Accept the new row (highlighted). *(Tip: demo mode adds a row deterministically; the live model may propose a revision instead — both are fine to show.)*
-5. *(2:20)* Type **"undo"** → chart reverts. Then send **"Strengthen the evidence that the thermostat uses homomorphic encryption"** → AI asks for documentation/URL instead of inventing evidence — show the URL fetch box in the **Evidence tab**.
+3. *(1:40)* Click **Accept** → chart cells highlight green, version ticks, session metrics update under the chat.
+4. *(1:55)* Send **"You missed that Acme also has a temperature sensor array"** → Accept the new row (highlighted). *(Tip: demo mode adds a row deterministically; the live model may propose a revision instead — both are fine to show.)*
+5. *(2:10)* Type **"undo"** → chart reverts. Open **Version history** → click **View** on v0 → cells that changed show as DIFFERS → back to latest. Then send **"Strengthen the evidence that the thermostat uses homomorphic encryption"** → AI asks for documentation/URL instead of inventing evidence (Evidence tab has the URL fetch).
 6. *(2:40)* Click **Export to Word**, open the .docx, show the chart + change-log appendix. Close: "Human-approved, evidence-grounded, export-ready."
 
 ## 6. Submission checklist

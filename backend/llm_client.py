@@ -15,8 +15,9 @@ class LLMError(RuntimeError):
 class LLMClient:
     def __init__(self, settings: Settings):
         if not settings.llm_configured:
-            raise LLMError("No API key configured. Set OPENAI_API_KEY in .env "
-                           "or Streamlit secrets, or use Demo mode.")
+            raise LLMError("No API key configured — set OPENAI_API_KEY in .env "
+                           "or Streamlit secrets. (Without one, the built-in "
+                           "engine answers automatically.)")
         from openai import OpenAI
         # Bounded waiting: Streamlit runs single-threaded, so the SDK defaults
         # (600s read timeout x 2 retries) would freeze the app behind a spinner

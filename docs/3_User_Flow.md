@@ -13,7 +13,7 @@ for technical documentation or a URL to scrape.
 ```mermaid
 flowchart TD
     A([Analyst opens iLumos]) --> B["Set up: upload claim chart +<br>product documents, set instructions"]
-    B --> C["Chart displayed with<br>evidence-strength badges"]
+    B --> C["Initial AI analysis: chart displayed with<br>strength badges, weak evidence flagged"]
     C --> D["Analyst asks for a refinement in chat<br>e.g. 'Strengthen the evidence for element 2'"]
     D --> E{Evidence found<br>in documents?}
     E -->|"yes — quotes verified verbatim;<br>unverified ones flagged"| F["AI proposes a change:<br>before/after diff + citations"]
@@ -33,7 +33,7 @@ flowchart TD
     A1 --> E
 
     subgraph EB ["Edge case B — undo"]
-        B1["Version history pops the last<br>refinement; chart reverts"]
+        B1["Version history pops the last refinement —<br>any version can be viewed or restored"]
     end
     B1 --> C
 

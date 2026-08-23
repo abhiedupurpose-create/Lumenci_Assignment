@@ -18,19 +18,6 @@ from backend.refinement_engine import (SessionMetrics, accept_suggestion,
                                        reject_suggestion)
 
 
-def engine_status(demo_mode: bool, settings: Settings | None = None) -> tuple[str, str]:
-    """(badge_label, detail) for the sidebar status pill."""
-    settings = settings or get_settings()
-    if demo_mode:
-        return ("🎭 Demo mode", "Scripted engine — no API calls. Grounded against "
-                                "your uploaded documents.")
-    if settings.llm_configured:
-        endpoint = settings.base_url or "api.openai.com"
-        return (f"⚡ Live · {settings.model}", f"Endpoint: {endpoint}")
-    return ("⚠️ No API key", "Set OPENAI_API_KEY in .env / Streamlit secrets, "
-                             "or switch on Demo mode.")
-
-
 def respond(user_message: str, *, demo_mode: bool, system_prompt: str,
             store: ChartStore, docs: list[DocFile],
             history: list[ChatMessage], metrics: SessionMetrics,
@@ -79,12 +66,18 @@ def respond(user_message: str, *, demo_mode: bool, system_prompt: str,
                                        docs=docs, history=history)
         except (LLMError, ValueError) as exc:
             # ValueError covers prompt-template mismatches — respond() promises
-            # the UI it never raises, whatever breaks underneath.
+            # the UI it never raises. Degrade gracefully: answer with the
+            # grounded built-in engine so the analyst is never dead-ended.
             metrics.llm_failures += 1
-            return EngineResponse(
-                reply=(f"⚠️ {exc}\n\nYou can retry, check your key/endpoint in the "
-                       "sidebar status, or switch on **Demo mode** to continue "
-                       "without the API."),
-                handled_intent="error")
+            resp = handle_user_message_demo(user_message, store=store,
+                                            docs=docs, history=history)
+            reason = str(exc)[:200]
+            resp.reply = (f"⚠️ *The live model call failed ({reason}), so this "
+                          "answer comes from the built-in fallback engine — "
+                          "still grounded in your documents. Retry anytime.*\n\n"
+                          + resp.reply)
+            resp.handled_intent = resp.handled_intent or "llm_error_fallback"
+            metrics.record_new(resp.suggestions)
+            return resp
     metrics.record_new(resp.suggestions)
     return resp

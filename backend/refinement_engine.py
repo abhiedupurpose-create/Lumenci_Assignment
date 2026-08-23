@@ -49,7 +49,7 @@ _HISTORY_TURNS = 8
 
 @dataclass
 class SessionMetrics:
-    """Chat-quality signals surfaced in the sidebar (and proposed in the PRD)."""
+    """Chat-quality signals surfaced under the chat pane (and proposed in the PRD)."""
     suggestions_made: int = 0
     accepted: int = 0
     rejected: int = 0
