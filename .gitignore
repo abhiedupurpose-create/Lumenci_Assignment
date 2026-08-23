@@ -19,3 +19,6 @@ venv/
 
 # Third-party assignment brief — keep local, not for the public repo
 PM.pdf
+
+# Local real-world test kit (scraped third-party text - not for the public repo)
+test_kit/
