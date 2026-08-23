@@ -11,8 +11,10 @@ from backend.llm_client import LLMClient, LLMError
 from backend.models import ChatMessage, DocFile, EngineResponse
 from backend.refinement_engine import (SessionMetrics, accept_suggestion,
                                        check_decision_intent,
+                                       check_diff_intent, check_restore_intent,
                                        handle_user_message,
                                        latest_pending_suggestion,
+                                       perform_diff, perform_restore,
                                        reject_suggestion)
 
 
@@ -35,6 +37,15 @@ def respond(user_message: str, *, demo_mode: bool, system_prompt: str,
             settings: Settings | None = None) -> EngineResponse:
     """Route one analyst message to the right engine; never raises."""
     settings = settings or get_settings()
+
+    # Version intents first: "restore to v2" must win over the undo intent,
+    # and "what changed from v1" is answered deterministically from history.
+    restore_to = check_restore_intent(user_message)
+    if restore_to is not None:
+        return perform_restore(store, restore_to)
+    diff = check_diff_intent(user_message, store)
+    if diff is not None:
+        return perform_diff(store, *diff)
 
     # Typed decisions ("accept", "reject that") resolve against the most
     # recent pending suggestion — accept/reject works through conversation,

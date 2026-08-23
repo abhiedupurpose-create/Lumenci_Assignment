@@ -134,6 +134,14 @@ def render_onboarding_setup() -> None:
                  "evidence found verbatim in these documents.")
         _handle_doc_uploads("doc_upload_onboarding")
 
+    with st.expander("⚙️ Advanced — analyst instructions (system prompt)"):
+        st.text_area(
+            "Instructions sent to the AI with every message", key="system_prompt",
+            height=200,
+            help="The AI's standing instructions: role, evidence rules, legal "
+                 "tone. Defaults are maintained in the repo's prompts/ folder — "
+                 "edit here to override for this session.")
+
 
 # ---------------------------------------------------------------------------
 # Evidence tab (after a chart is loaded)
@@ -175,45 +183,6 @@ def render_evidence_tab() -> None:
                 "instead of inventing evidence.")
 
 
-# ---------------------------------------------------------------------------
-# Settings tab (after a chart is loaded)
-# ---------------------------------------------------------------------------
-
-def render_settings_tab() -> None:
-    with st.container(border=True):
-        st.markdown("**Switch case**")
-        st.selectbox("Sample case", sample_names(), key="sample_choice",
-                     label_visibility="collapsed",
-                     help="Load a different sample case (replaces the current "
-                          "chart and chat).")
-        st.button("Load sample case", use_container_width=True,
-                  on_click=_load_sample_case,
-                  help="Replaces the current chart, documents, and chat with "
-                       "the selected sample.")
-        st.file_uploader(
-            "Replace with your own chart (CSV, XLSX, JSON)",
-            type=["csv", "xlsx", "json"], key="chart_upload_main",
-            help="Uploading a new chart replaces the current one and clears "
-                 "the chat.")
-        _handle_chart_upload("chart_upload_main")
-
-    with st.expander("⚙️ Advanced — analyst instructions"):
-        st.text_area(
-            "Instructions sent to the AI with every message", key="system_prompt",
-            height=220,
-            help="The AI's standing instructions (role, evidence rules, tone). "
-                 "Defaults are maintained in the repo's prompts/ folder — edit "
-                 "here to override for this session.")
-
-    m = st.session_state.metrics
-    if m.suggestions_made:
-        st.caption("**Session quality**")
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Suggested", m.suggestions_made,
-                  help="Actionable AI suggestions made this session")
-        c2.metric("Accepted", m.accepted + m.modified,
-                  help="Suggestions you accepted (including with edits)")
-        c3.metric("Rejected", m.rejected, help="Suggestions you rejected")
-        if m.grounded_rate is not None:
-            st.progress(m.grounded_rate,
-                        text=f"Grounded suggestions {m.grounded_rate:.0%}")
+# Case switching and analyst instructions live on the Home screen only —
+# mid-case, the workspace offers exactly what mid-case work needs:
+# the chart (with versions/undo/export) and the evidence pool.

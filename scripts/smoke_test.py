@@ -189,7 +189,30 @@ check("CSV parsed", len(chart.rows) == 1 and chart.rows[0].element == "An elemen
 check("control chars stripped at parse", "\x0b" not in chart.rows[0].feature)
 check("clean_text strips XML-invalid chars", clean_text("a\x00b\x0bc") == "abc")
 
-# 12. Export
+# 12. Version viewing / restore / diff (chat-driven version control)
+head = store.version_number
+vr = respond("what changed", demo_mode=True, system_prompt=DEFAULT_SYSTEM_PROMPT,
+             store=store, docs=docs, history=history, metrics=metrics)
+check("'what changed' answered from history", vr.handled_intent == "diff"
+      and ("Changes" in vr.reply or "No differences" in vr.reply))
+vr = respond("restore to v0", demo_mode=True, system_prompt=DEFAULT_SYSTEM_PROMPT,
+             store=store, docs=docs, history=history, metrics=metrics)
+check("'restore to v0' restores non-destructively",
+      vr.handled_intent == "restore" and store.version_number == head + 1
+      and [r.element for r in store.current.rows]
+      == [r.element for r in store.history[0].chart.rows])
+vr = respond("revert to v1", demo_mode=True, system_prompt=DEFAULT_SYSTEM_PROMPT,
+             store=store, docs=docs, history=history, metrics=metrics)
+check("'revert to vN' is a restore, not an undo",
+      vr.handled_intent == "restore")
+store.view_version(0)
+check("viewing an old version is read-only display",
+      store.is_viewing_old and store.displayed is store.history[0].chart
+      and store.current is not store.displayed)
+store.return_to_latest()
+check("return to latest clears view mode", not store.is_viewing_old)
+
+# 13. Export
 data = export_docx(store)
 check("docx exported", data[:2] == b"PK" and len(data) > 2000)
 check("export filename derived safely",

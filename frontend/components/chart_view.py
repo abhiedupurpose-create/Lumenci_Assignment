@@ -44,10 +44,18 @@ def _evidence_cell(text: str) -> str:
 
 
 def render_chart(store: ChartStore) -> None:
-    chart = store.current
-    changed = store.changed_cells()
-    added = store.added_row_ids
+    chart = store.displayed
+    if store.is_viewing_old:
+        # Viewing an older snapshot: highlight the cells that differ from the
+        # latest version, so the analyst can see exactly what the AI changed.
+        diff, _, _ = store.diff_between(store.viewing, store.version_number)
+        changed = {(c.row_id, c.field_name) for c in diff}
+        added = set()
+    else:
+        changed = store.changed_cells()
+        added = store.added_row_ids
 
+    pill_label = "differs" if store.is_viewing_old else "updated"
     head = ("<tr><th>#</th><th>Patent Claim Element</th>"
             "<th>Accused Product Feature (Evidence)</th>"
             "<th>AI Reasoning</th><th>Strength</th></tr>")
@@ -57,7 +65,7 @@ def render_chart(store: ChartStore) -> None:
         cells = [f'<td class="col-num">{i}</td>']
         for field in ("element", "feature", "reasoning"):
             cls = "cell-changed" if (row.row_id, field) in changed else ""
-            pill = (' <span class="badge badge-updated">updated</span>'
+            pill = (f' <span class="badge badge-updated">{pill_label}</span>'
                     if cls else "")
             value = getattr(row, field)
             body = _evidence_cell(value) if field == "feature" else _esc(value)
@@ -71,6 +79,9 @@ def render_chart(store: ChartStore) -> None:
         f'<div class="chart-wrap"><table class="claim-chart">{head}'
         f'{"".join(body_rows)}</table></div>',
         unsafe_allow_html=True)
+
+    if store.is_viewing_old:
+        return  # read-only snapshot: the banner above explains the highlights
 
     if store.last_changes or added:
         with st.expander("🔍 What changed in the last refinement", expanded=False):

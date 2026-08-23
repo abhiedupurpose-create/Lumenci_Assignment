@@ -18,6 +18,21 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Figtree', 'Inter', -apple-system, sans-serif;
 }
 
+/* ---------- type scale: one consistent hierarchy ----------
+   12px body everywhere outside headings · 11px captions/meta · 10px labels */
+.stApp p, .stApp li, .stApp label, .stApp input, .stApp textarea,
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stWidgetLabel"] p,
+.stApp button p, .stApp [data-testid="stChatInput"] textarea,
+.stApp [data-testid="stFileUploaderDropzoneInstructions"] span,
+.stApp [data-testid="stAlertContentInfo"] p,
+.stApp [data-testid="stAlertContentWarning"] p {
+  font-size: 12px !important; line-height: 1.5;
+}
+.stApp [data-testid="stCaptionContainer"] p,
+.stApp [data-testid="stCaptionContainer"] { font-size: 11px !important; }
+.stApp [data-testid="stExpander"] summary p { font-size: 12px !important; }
+
 /* ---------- brand marks ---------- */
 .ilumos-brand {
   font-family: 'Figtree', sans-serif; font-weight: 800; letter-spacing: -0.02em;
@@ -33,7 +48,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ---------- strength & status badges ---------- */
 .badge {
   display: inline-block; padding: 2px 10px; border-radius: 999px;
-  font-size: 0.70rem; font-weight: 600; letter-spacing: .04em;
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
   text-transform: uppercase; white-space: nowrap;
   font-family: 'Trispace', 'Figtree', monospace;
 }
@@ -49,12 +64,12 @@ h1, h2, h3, h4, h5, h6 {
 .chart-wrap { overflow-x: auto; border-radius: 10px;
   box-shadow: 0 1px 4px rgba(16,16,19,.08); }
 table.claim-chart {
-  width: 100%; border-collapse: collapse; font-size: 0.78rem;
+  width: 100%; border-collapse: collapse; font-size: 12px;
   table-layout: fixed;
 }
 table.claim-chart th {
   background: #101013; color: #ffffff; text-align: left;
-  padding: 7px 10px; font-size: 0.66rem; letter-spacing: .05em;
+  padding: 7px 10px; font-size: 10px; letter-spacing: .05em;
   text-transform: uppercase; font-weight: 700;
   border-bottom: 3px solid #b16cea;
 }
@@ -72,7 +87,7 @@ table.claim-chart tr.row-added td {
 table.claim-chart td.col-num { width: 30px; text-align: center; color: #575757;
   background: #f7f0fa; font-weight: 700; font-family: 'Trispace', monospace; }
 table.claim-chart td.col-strength { width: 84px; }
-.cell-source { display: block; color: #8a8794; font-size: 0.68rem;
+.cell-source { display: block; color: #8a8794; font-size: 10px;
   margin-top: 5px; font-style: italic; }
 
 /* ---------- workspace panes: viewport-fit, each scrolls internally -------- */
@@ -100,18 +115,18 @@ div.st-key-doc_pane {
 }
 
 /* ---------- suggestion cards ---------- */
-.sug-head { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px;
+.sug-head { font-weight: 700; font-size: 13px; margin-bottom: 2px;
   color: inherit; }
-.sug-field-label { font-size: 0.70rem; font-weight: 700; letter-spacing: .05em;
+.sug-field-label { font-size: 10px; font-weight: 700; letter-spacing: .05em;
   text-transform: uppercase; color: #7a7686; margin: 6px 0 1px; }
 /* before/after carry their own chips → legible on any theme */
 .sug-before { display: block; color: #991b1b; background: #fde2e2;
-  text-decoration: line-through; font-size: 0.82rem; border-radius: 6px;
+  text-decoration: line-through; font-size: 12px; border-radius: 6px;
   padding: 3px 8px; margin: 2px 0; }
 .sug-after  { display: block; color: #116644; background: #dcf4e7;
-  font-size: 0.86rem; border-radius: 6px; padding: 3px 8px; margin: 2px 0; }
+  font-size: 12px; border-radius: 6px; padding: 3px 8px; margin: 2px 0; }
 .sug-quote  { border-left: 3px solid #b16cea; padding: 3px 10px; margin: 4px 0;
-  color: #3d3a45; font-size: 0.82rem; font-style: italic; background: #f7f0fa;
+  color: #3d3a45; font-size: 11px; font-style: italic; background: #f7f0fa;
   border-radius: 0 6px 6px 0; }
 
 /* keep the app title compact */

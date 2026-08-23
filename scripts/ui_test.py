@@ -85,15 +85,21 @@ last = at.session_state["chat"][-1]
 check("needs-input card asks for doc/URL",
       bool(last.suggestions) and last.suggestions[0].action == "needs_input")
 
-# Switch to a different sample case from the Settings tab
+# Switch case the intended way: go Home, pick another sample, load it
+home_btn = next(b for b in at.main.button if "Home" in b.label)
+home_btn.click()
+at.run()
+no_exception(at, "navigate home")
+check("home shows continue option",
+      any("Continue" in b.label for b in at.main.button))
 picker = next(s for s in at.selectbox if s.key == "sample_choice")
 picker.set_value("VoltEdge E-Scooter — US789012")
 at.run()
-switch_btn = next(b for b in at.main.button if "sample" in b.label.lower())
-switch_btn.click()
+load_btn = next(b for b in at.main.button if "Load sample" in b.label)
+load_btn.click()
 at.run()
-no_exception(at, "sample switch")
-check("sample switcher loads the new case",
+no_exception(at, "sample switch from home")
+check("sample switch loads the new case",
       "VoltEdge" in at.session_state["store"].current.title
       and len(at.session_state["docs"]) == 2)
 

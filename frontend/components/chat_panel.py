@@ -230,3 +230,11 @@ def render_chat() -> None:
                 ChatMessage(role="user", content=prompt.strip()))
             st.session_state.pending_request = prompt.strip()
             st.rerun()
+
+        m = st.session_state.metrics
+        if m.suggestions_made:
+            grounded = (f" · {m.grounded_rate:.0%} grounded"
+                        if m.grounded_rate is not None else "")
+            st.caption(f"Session: {m.suggestions_made} suggested · "
+                       f"{m.accepted + m.modified} accepted · "
+                       f"{m.rejected} rejected{grounded}")

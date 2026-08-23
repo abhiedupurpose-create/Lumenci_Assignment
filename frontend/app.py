@@ -26,8 +26,7 @@ from frontend.components.chart_view import render_chart
 from frontend.components.chat_panel import render_chat
 from frontend.components.export_panel import render_toolbar
 from frontend.components.setup import (render_evidence_tab,
-                                       render_onboarding_setup,
-                                       render_settings_tab)
+                                       render_onboarding_setup)
 from frontend.styles import brand_header, inject_styles
 
 _DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
@@ -122,16 +121,13 @@ def _render_workspace() -> None:
     with col_chat:
         render_chat()
     with col_doc:
-        tab_chart, tab_evidence, tab_settings = st.tabs(
-            ["📋 Claim chart", "📁 Evidence", "⚙️ Settings"])
+        tab_chart, tab_evidence = st.tabs(["📋 Claim chart", "📁 Evidence"])
         with tab_chart:
             render_toolbar()
             with st.container(height=560, key="doc_pane", border=False):
                 render_chart(ss.store)
         with tab_evidence:
             render_evidence_tab()
-        with tab_settings:
-            render_settings_tab()
 
 
 def _render_doc_page(title: str, path: Path, kind: str) -> None:

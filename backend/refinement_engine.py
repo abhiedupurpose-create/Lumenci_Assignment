@@ -29,6 +29,15 @@ from backend.prompts import load_prompt, render_prompt
 _INTENT_MAX_WORDS = 4
 _UNDO_RE = re.compile(r"^\s*(?:please\s+|now\s+)?(?:undo|revert|roll\s?back)\b",
                       re.IGNORECASE)
+_RESTORE_RE = re.compile(
+    r"^\s*(?:please\s+)?(?:restore|revert|go\s+back|roll\s?back)"
+    r"(?:\s+(?:to|the|chart|content))*\s+(?:version\s*|v)(\d+)\s*[.!]*\s*$",
+    re.IGNORECASE)
+_DIFF_RE = re.compile(r"\b(what(?:'s| is| has| was)?\s+chang|difference|diff\b|compare)",
+                      re.IGNORECASE)
+_FIELD_TITLES = {"element": "Patent Claim Element",
+                 "feature": "Accused Product Feature (Evidence)",
+                 "reasoning": "AI Reasoning", "strength": "Evidence Strength"}
 _ACCEPT_RE = re.compile(r"^\s*(?:please\s+)?(?:accept|apply|approve)\b(?:\s+(?:it|that|"
                         r"this|the\s+suggestion))?\s*[.!]*\s*$", re.IGNORECASE)
 _REJECT_RE = re.compile(r"^\s*(?:please\s+)?(?:reject|discard|dismiss)\b(?:\s+(?:it|that|"
@@ -249,6 +258,81 @@ def latest_pending_suggestion(history: list[ChatMessage]) -> Optional[Suggestion
             if sug.status == "pending" and sug.action != "needs_input":
                 return sug
     return None
+
+
+def check_restore_intent(user_message: str) -> Optional[int]:
+    """Version number for short messages like 'restore to v2' / 'revert to
+    version 1'. Checked BEFORE the undo intent so 'revert to v2' restores
+    instead of popping a version."""
+    if len(user_message.split()) > 6:
+        return None
+    m = _RESTORE_RE.match(user_message)
+    return int(m.group(1)) if m else None
+
+
+def check_diff_intent(user_message: str,
+                      store: ChartStore) -> Optional[tuple[int, int]]:
+    """(from_version, to_version) for questions like 'what changed in v2 from
+    v1' / 'what changed' (latest vs. previous by default)."""
+    if not _DIFF_RE.search(user_message):
+        return None
+    head = store.version_number
+    nums = [int(n) for n in re.findall(r"\bv?(\d+)\b", user_message)
+            if int(n) <= head]
+    # Without an explicit version reference, only a short question is a diff
+    # request — "compare the marketing claim with the spec for element 2"
+    # is a refinement ask, not a version diff.
+    if not nums and len(user_message.split()) > 8:
+        return None
+    if len(nums) >= 2:
+        return min(nums[0], nums[1]), max(nums[0], nums[1])
+    if len(nums) == 1:
+        return (nums[0], head) if nums[0] < head else (max(head - 1, 0), head)
+    return max(head - 1, 0), head
+
+
+def perform_restore(store: ChartStore, index: int) -> EngineResponse:
+    if not 0 <= index <= store.version_number:
+        return EngineResponse(
+            reply=f"There's no v{index} — this chart has versions v0 to "
+                  f"v{store.version_number}.", handled_intent="restore")
+    if index == store.version_number:
+        return EngineResponse(
+            reply=f"v{index} is already the latest version — nothing to restore.",
+            handled_intent="restore")
+    label = store.restore(index)
+    return EngineResponse(
+        reply=(f"⏪ {label}. The chart now matches v{index}, recorded as new "
+               f"version v{store.version_number} — so nothing is lost, and "
+               '"undo" takes you right back.'),
+        handled_intent="restore")
+
+
+def perform_diff(store: ChartStore, a: int, b: int) -> EngineResponse:
+    if a == b:
+        return EngineResponse(reply=f"v{a} and v{b} are the same version.",
+                              handled_intent="diff")
+    changes, added, removed = store.diff_between(a, b)
+    chart_b = store.history[b].chart
+    lines = []
+    for ch in changes:
+        idx = chart_b.row_index(ch.row_id)
+        n = idx + 1 if idx is not None else "?"
+        before = ch.before[:90] + ("…" if len(ch.before) > 90 else "")
+        after = ch.after[:90] + ("…" if len(ch.after) > 90 else "")
+        lines.append(f"- **Element {n} · {_FIELD_TITLES[ch.field_name]}**: "
+                     f"~~{before}~~ → {after}")
+    lines += [f"- **Row added**: {el[:90]}" for el in added]
+    lines += [f"- **Row removed**: {el[:90]}" for el in removed]
+    if not lines:
+        return EngineResponse(reply=f"No differences between v{a} and v{b}.",
+                              handled_intent="diff")
+    labels = (f"**v{a}** ({store.history[a].label}) → **v{b}** "
+              f"({store.history[b].label})")
+    return EngineResponse(
+        reply=f"🔍 Changes {labels}:\n" + "\n".join(lines) +
+              f'\n\nSay "restore to v{a}" to bring the older version back.',
+        handled_intent="diff")
 
 
 def perform_undo(store: ChartStore) -> EngineResponse:
