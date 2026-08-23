@@ -30,7 +30,7 @@ from frontend.components.setup import (render_evidence_tab,
 from frontend.styles import brand_header, inject_styles
 
 _DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
-APP_BUILD = "2026-08-23.7"  # bumped on deploy-relevant changes
+APP_BUILD = "2026-08-23.8"  # bumped on deploy-relevant changes
 
 
 def _render_debug() -> None:
@@ -75,20 +75,26 @@ def _render_debug() -> None:
                 report["dns"] = f"{host} → {sorted(families)}"
             except Exception as exc:
                 report["dns"] = f"FAILED: {exc}"
-            for name, fn in (("requests(urllib3)", "requests"), ("httpx", "httpx")):
+            import importlib
+            for name in ("requests", "httpx2"):
                 try:
-                    if fn == "requests":
-                        import requests
-                        r = requests.get(f"https://{host}/v1/models", timeout=10)
-                        code = r.status_code
-                    else:
-                        import httpx
-                        code = httpx.get(f"https://{host}/v1/models",
-                                         timeout=10).status_code
+                    lib = importlib.import_module(name)
+                    code = lib.get(f"https://{host}/v1/models",
+                                   timeout=10).status_code
                     report[name] = (f"reached endpoint (HTTP {code} — 401 here "
                                     "means connectivity is fine)")
                 except Exception as exc:
                     report[name] = f"FAILED: {type(exc).__name__}: {exc}"
+            try:
+                import httpx2
+                c = httpx2.Client(transport=httpx2.HTTPTransport(
+                    local_address="0.0.0.0", retries=2), trust_env=False,
+                    timeout=10)
+                code = c.get(f"https://{host}/v1/models").status_code
+                report["httpx2 (ipv4, no proxy env)"] = f"reached (HTTP {code})"
+            except Exception as exc:
+                report["httpx2 (ipv4, no proxy env)"] = (
+                    f"FAILED: {type(exc).__name__}: {exc}")
             st.write(report)
 
 
