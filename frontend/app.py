@@ -30,6 +30,42 @@ from frontend.components.setup import (render_evidence_tab,
 from frontend.styles import brand_header, inject_styles
 
 _DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
+APP_BUILD = "2026-08-23.6"  # bumped on deploy-relevant changes
+
+
+def _render_debug() -> None:
+    """Connection diagnostics, opened with ?debug=1 — shows presence/config
+    only, never secret values."""
+    import os
+    import sys
+
+    s = get_settings()
+    try:
+        secret_names = list(st.secrets.keys())
+    except Exception as exc:
+        secret_names = [f"(st.secrets unavailable: {type(exc).__name__})"]
+    with st.expander("🔧 Connection diagnostics", expanded=True):
+        st.caption(f"build {APP_BUILD} · python {sys.version.split()[0]} · "
+                   f"streamlit {st.__version__}")
+        st.write({
+            "llm_configured": s.llm_configured,
+            "api_key_present": bool(s.api_key),
+            "api_key_prefix": (s.api_key[:5] + "…") if s.api_key else "(none)",
+            "model": s.model,
+            "base_url": s.base_url or "(default: api.openai.com)",
+            "env_has_OPENAI_API_KEY": bool(os.environ.get("OPENAI_API_KEY")),
+            "st_secrets_keys": secret_names,
+            "session_demo_mode": st.session_state.get("demo_mode"),
+        })
+        if s.llm_configured and st.button("🧪 Test live API call"):
+            from backend.llm_client import LLMClient, LLMError
+            try:
+                out = LLMClient(s).complete(
+                    [{"role": "user",
+                      "content": 'Reply with JSON: {"ok": true}'}])
+                st.success(f"Live call OK — model replied: {out[:120]}")
+            except LLMError as exc:
+                st.error(f"Live call FAILED: {exc}")
 
 
 def _init_state() -> None:
@@ -149,6 +185,9 @@ def main() -> None:
                        page_icon="✳️", layout="wide")
     inject_styles()
     _init_state()
+
+    if st.query_params.get("debug"):
+        _render_debug()
 
     view = st.session_state.view
     if view == "analyzing":
