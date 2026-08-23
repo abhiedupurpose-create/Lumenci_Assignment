@@ -77,6 +77,14 @@ check("revision is grounded (verified citations)",
 
 msg = accept_suggestion(store, r.suggestions[0], metrics)
 check("accept applies and reports", "Applied" in msg)
+check("stop-signal progress note present", "🎉" in msg or "below" in msg)
+
+# Regression: improving an already-strong row must never downgrade it
+r_strong = ask("Strengthen the evidence for element 1")
+check("no strength downgrade on improvement",
+      not r_strong.suggestions
+      or r_strong.suggestions[0].action != "revise"
+      or r_strong.suggestions[0].proposed_strength in (None, "strong"))
 check("double-accept is a no-op", "already accepted"
       in accept_suggestion(store, r.suggestions[0], metrics))
 check("chart advanced to v1", store.version_number == 1)

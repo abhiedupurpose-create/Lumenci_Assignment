@@ -299,6 +299,16 @@ def _decision_guard(store: ChartStore, sug: Suggestion) -> Optional[str]:
     return None
 
 
+def _completion_note(store: ChartStore) -> str:
+    """The stop signal: once every element has strong support, say so —
+    the analyst should know when refinement is done, not fix forever."""
+    if all(r.strength == "strong" for r in store.current.rows):
+        return ("\n\n🎉 **Every element now has strong support** — the chart is "
+                "refinement-complete. Export to Word when you're ready.")
+    remaining = sum(1 for r in store.current.rows if r.strength != "strong")
+    return f"\n\n{remaining} element(s) still below *strong* — ask me when ready."
+
+
 def accept_suggestion(store: ChartStore, sug: Suggestion,
                       metrics: SessionMetrics) -> str:
     blocked = _decision_guard(store, sug)
@@ -309,7 +319,7 @@ def accept_suggestion(store: ChartStore, sug: Suggestion,
     sug.status = "accepted"
     metrics.accepted += 1
     return (f"✅ Applied: {label}. The updated cells are highlighted in the chart. "
-            'Say "undo" anytime to revert.')
+            'Say "undo" anytime to revert.' + _completion_note(store))
 
 
 def modify_suggestion(store: ChartStore, sug: Suggestion, overrides: dict,
@@ -326,7 +336,7 @@ def modify_suggestion(store: ChartStore, sug: Suggestion, overrides: dict,
     sug.status = "modified"
     metrics.modified += 1
     return (f"✏️ Applied with your edits: {label}. "
-            'Say "undo" anytime to revert.')
+            'Say "undo" anytime to revert.' + _completion_note(store))
 
 
 def reject_suggestion(sug: Suggestion, metrics: SessionMetrics) -> str:

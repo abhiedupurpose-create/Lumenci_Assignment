@@ -105,9 +105,15 @@ def _needs_input(topic: str) -> EngineResponse:
 
 
 def _last_cited_docs(history: list[ChatMessage]) -> set[str]:
+    """The PRIMARY source of the most recent cited suggestion — a correction
+    discards that source only. Excluding every cited document could empty the
+    search space entirely (a 2-citation suggestion may span all docs)."""
     for msg in reversed(history):
         if msg.role == "assistant" and msg.suggestions:
-            return {c.doc_name for s in msg.suggestions for c in s.citations}
+            for sug in reversed(msg.suggestions):
+                if sug.citations:
+                    return {sug.citations[0].doc_name}
+            return set()
     return set()
 
 
@@ -124,35 +130,45 @@ def _last_suggested_row(history: list[ChatMessage],
     return None
 
 
+_STRENGTH_RANK = {"weak": 0, "moderate": 1, "strong": 2}
+
+
 def _make_revision(row: ClaimRow, rows: list[ClaimRow], evidence, *,
-                   legal: bool) -> Suggestion:
+                   legal: bool, allow_downgrade: bool = False) -> Suggestion:
     n = rows.index(row) + 1
     citations = [Citation(doc_name=d.name, quote=s, verified=True)
                  for d, s, _ in evidence]
     doc, quote, score = evidence[0]
     is_spec = "spec" in doc.name.lower()
     feature = f'{doc.name} states: "{quote}"'
+    # Reasoning references the cited evidence but never re-embeds the full
+    # quote — that already lives in the evidence column, cell for cell.
+    kind = "technical specification" if is_spec else "product documentation"
     if legal:
-        key_phrase = row.element.split(" ")[:6]
+        key_phrase = " ".join(row.element.split(" ")[:6])
         reasoning = (
-            f"Under a plain-meaning construction of \"{' '.join(key_phrase)}…\", the "
-            f"accused product satisfies this limitation: {doc.name} states "
-            f"\"{quote}\". This is "
-            f"{'technical documentation, not marketing language, ' if is_spec else ''}"
-            "which anticipates the counter-argument that promotional copy does not "
-            "prove how the limitation is actually practiced.")
+            f"Under a plain-meaning construction of \"{key_phrase}…\", the accused "
+            f"product practices this limitation per the cited {kind}. "
+            f"{'Because this is technical documentation rather than promotional copy, it ' if is_spec else 'It '}"
+            "anticipates the counter-argument that marketing language alone does "
+            "not prove how the limitation is actually practiced.")
     else:
         reasoning = (
-            f"{doc.name} discloses: \"{quote}\". This directly evidences the claimed "
-            f"\"{row.element[:80]}\" — the cited language describes the specific "
-            "mechanism rather than a marketing-level capability, which materially "
-            "strengthens the infringement read for this element.")
+            f"The cited {kind} describes the specific mechanism satisfying "
+            f"\"{row.element[:80]}\" — implementation-level disclosure rather than "
+            "a marketing-level capability, which materially strengthens the "
+            "infringement read for this element.")
+    computed = "strong" if (is_spec and score >= 3) else "moderate"
+    if not allow_downgrade and _STRENGTH_RANK[computed] < _STRENGTH_RANK[row.strength]:
+        # An improvement must never lower strength as a side effect; only a
+        # wrong-evidence correction (allow_downgrade=True) may re-rate downward.
+        computed = row.strength
     return Suggestion(
         action="revise",
         target_row_id=row.row_id,
         proposed_feature=feature,
         proposed_reasoning=reasoning,
-        proposed_strength="strong" if (is_spec and score >= 3) else "moderate",
+        proposed_strength=computed,
         rationale=(f"Element {n} currently rests on "
                    f"{'weak' if row.strength == 'weak' else 'improvable'} support; "
                    f"the {'specification' if is_spec else 'document'} language above "
@@ -181,7 +197,9 @@ def handle_user_message_demo(user_message: str, *, store: ChartStore,
         query = (row.element if row else user_message) + " " + user_message
         evidence = _best_evidence(query, docs, exclude_docs=exclude)
         if row and evidence:
-            sug = _make_revision(row, rows, evidence, legal=False)
+            # A correction replaces bad evidence — re-rating downward is honest.
+            sug = _make_revision(row, rows, evidence, legal=False,
+                                 allow_downgrade=True)
             return EngineResponse(
                 reply=("You're right to flag that — thanks for the correction. I've "
                        "discarded the earlier source and found alternative support "

@@ -72,6 +72,8 @@ table.claim-chart tr.row-added td {
 table.claim-chart td.col-num { width: 30px; text-align: center; color: #575757;
   background: #f7f0fa; font-weight: 700; font-family: 'Trispace', monospace; }
 table.claim-chart td.col-strength { width: 84px; }
+.cell-source { display: block; color: #8a8794; font-size: 0.68rem;
+  margin-top: 5px; font-style: italic; }
 
 /* ---------- workspace panes: viewport-fit, each scrolls internally -------- */
 .block-container { padding-top: 1.4rem; padding-bottom: 0.6rem; }

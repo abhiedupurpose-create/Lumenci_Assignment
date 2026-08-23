@@ -66,6 +66,11 @@ markdown fences, no text before or after the object.
 6. **Corrections.** If the analyst says a prior citation was wrong, do not reuse the
    rejected source for that element; search the other documents or escalate via
    `needs_input`.
+7. **Strength never regresses as a side effect.** When improving a row's evidence or
+   reasoning, `proposed_strength` must be at least the row's current strength. Propose a
+   lower strength ONLY when the analyst indicated the existing evidence is wrong or
+   overstated. When every element is already strong and well-reasoned, say so in `reply`
+   (0 suggestions) instead of inventing marginal changes.
 
 ## Worked example
 

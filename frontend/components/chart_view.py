@@ -3,10 +3,17 @@ changed-cell highlighting, added-row highlighting, and a what-changed panel."""
 from __future__ import annotations
 
 import html
+import re
 
 import streamlit as st
 
 from backend.chart_store import ChartStore
+
+# Evidence cells usually read '<source> states: "<quote>"' — display the quote
+# as the cell's content and the source as a grey reference line at the bottom.
+_EVIDENCE_RE = re.compile(
+    r'^(?P<src>[^"“”]{3,90}?)\s*(?:states|shows|claims?|discloses|says)\s*[:\-]?\s*'
+    r'["“](?P<quote>.+)["”]\s*$', re.DOTALL)
 
 _FIELD_TITLES = {"element": "Patent Claim Element",
                  "feature": "Accused Product Feature (Evidence)",
@@ -27,6 +34,15 @@ def _badge(strength: str) -> str:
     return f'<span class="badge badge-{cls}">{_esc(strength)}</span>'
 
 
+def _evidence_cell(text: str) -> str:
+    """Quote first; source as a grey reference line at the cell's bottom."""
+    m = _EVIDENCE_RE.match(text.strip())
+    if not m:
+        return _esc(text)
+    return (f'“{_esc(m.group("quote"))}”'
+            f'<span class="cell-source">— {_esc(m.group("src").strip())}</span>')
+
+
 def render_chart(store: ChartStore) -> None:
     chart = store.current
     changed = store.changed_cells()
@@ -43,7 +59,9 @@ def render_chart(store: ChartStore) -> None:
             cls = "cell-changed" if (row.row_id, field) in changed else ""
             pill = (' <span class="badge badge-updated">updated</span>'
                     if cls else "")
-            cells.append(f'<td class="{cls}">{_esc(getattr(row, field))}{pill}</td>')
+            value = getattr(row, field)
+            body = _evidence_cell(value) if field == "feature" else _esc(value)
+            cells.append(f'<td class="{cls}">{body}{pill}</td>')
         s_cls = ("cell-changed col-strength"
                  if (row.row_id, "strength") in changed else "col-strength")
         cells.append(f'<td class="{s_cls}">{_badge(row.strength)}</td>')

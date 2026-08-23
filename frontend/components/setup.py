@@ -53,6 +53,7 @@ def _fetch_url() -> None:
     """Button callback: fetch → add to pool → clear the input."""
     url = (st.session_state.get("evidence_url") or "").strip()
     if not url:
+        st.session_state["_url_error"] = "Enter a URL first."
         return
     try:
         doc = fetch_url_as_doc(url)
@@ -153,8 +154,9 @@ def render_evidence_tab() -> None:
             help="When the AI can't find evidence, it will ask you for a "
                  "document or a URL — paste the URL here and its text is "
                  "scraped into the evidence pool.")
+        # Never disabled: the input's value only commits on blur, so gating on
+        # it would leave the button dead at the exact moment the user clicks.
         st.button("Fetch page as evidence", use_container_width=True,
-                  disabled=not st.session_state.get("evidence_url"),
                   on_click=_fetch_url,
                   help="Downloads the page, strips it to plain text, and adds "
                        "it as a citable document.")
