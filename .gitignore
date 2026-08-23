@@ -16,3 +16,6 @@ venv/
 # Build artifacts
 *.docx
 !docs/**/*.docx
+
+# Third-party assignment brief — keep local, not for the public repo
+PM.pdf
