@@ -41,6 +41,7 @@ def _load_sample_case() -> None:
     st.session_state.processed_docs = set()
     st.session_state.pop("_chart_token", None)
     _say(f"Loaded **{chart.title}** with {len(docs)} product documents. {hint}")
+    st.session_state.view = "analyzing"
 
 
 def _remove_doc(name: str) -> None:
@@ -79,6 +80,8 @@ def _handle_chart_upload(uploader_key: str) -> None:
              f"({len(st.session_state.store.current.rows)} claim elements). "
              "Add product documents in the Evidence tab so I can ground my "
              "suggestions, then ask for a refinement.")
+        st.session_state.view = "analyzing"
+        st.rerun()
     except ChartParseError as exc:
         st.error(str(exc))
 

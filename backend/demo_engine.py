@@ -60,6 +60,11 @@ def _best_evidence(query: str, docs: list[DocFile],
     return top
 
 
+# Public alias: the initial-analysis pass (backend/analyzer.py) reuses the
+# same retrieval that grounds demo-mode suggestions.
+find_supporting_evidence = _best_evidence
+
+
 def _target_row(message: str, rows: list[ClaimRow],
                 weak_fallback: bool = True) -> ClaimRow | None:
     m = re.search(r"(?:element|row)\s*#?\s*(\d+)", message, re.IGNORECASE)

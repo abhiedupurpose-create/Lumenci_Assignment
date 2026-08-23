@@ -1,14 +1,22 @@
 """iLumos — AI chat-based claim chart refinement (prototype).
 
-Layout + session wiring only; every decision (engine dispatch, parsing,
-grounding, versioning, export) lives in backend/*. No sidebar: setup happens
-on the onboarding screen, then everything lives in the main pane — chart on
-the left, Chat / Evidence / Settings tabs on the right.
+Views (simple navigation, session-routed):
+  home       — brand, sample-case dropdown, uploads, evaluator links
+  analyzing  — loading screen: parse → index evidence → score elements
+  workspace  — 35% chat pane (left) · 65% document view with issues (right)
+  diagram    — user-flow diagram (for evaluators)
+  prd        — product requirements document (for evaluators)
+
+Layout + wiring only; all logic lives in backend/*.
 """
 from __future__ import annotations
 
+import time
+from pathlib import Path
+
 import streamlit as st
 
+from backend.analyzer import analysis_summary, analyze_chart
 from backend.chart_store import ChartStore
 from backend.config import get_settings
 from backend.models import ChatMessage
@@ -22,6 +30,8 @@ from frontend.components.setup import (render_evidence_tab,
                                        render_settings_tab)
 from frontend.styles import brand_header, inject_styles
 
+_DOCS_DIR = Path(__file__).resolve().parent.parent / "docs"
+
 
 def _init_state() -> None:
     ss = st.session_state
@@ -31,17 +41,109 @@ def _init_state() -> None:
     ss.setdefault("metrics", SessionMetrics())
     ss.setdefault("system_prompt", DEFAULT_SYSTEM_PROMPT)
     ss.setdefault("processed_docs", set())
+    ss.setdefault("view", "home")
     # No API key configured → the scripted demo engine answers (labeled in chat).
     ss.setdefault("demo_mode", not get_settings().llm_configured)
 
 
-def _render_onboarding() -> None:
+def _nav(view: str) -> None:
+    st.session_state.view = view
+
+
+def _breadcrumb(here: str) -> None:
+    """Home button + breadcrumb trail at the top of every non-home view."""
+    c1, c2 = st.columns([0.14, 0.86])
+    c1.button("🏠 Home", on_click=_nav, args=("home",), use_container_width=True,
+              help="Back to the start screen (your work is kept)")
+    c2.caption(f"Home / {here}")
+
+
+# ---------------------------------------------------------------------------
+# Views
+# ---------------------------------------------------------------------------
+
+def _render_home() -> None:
     st.markdown(brand_header(), unsafe_allow_html=True)
     st.markdown(
         "Refine patent claim charts conversationally — the AI proposes changes "
         "with **verified citations** from your product documents, you approve "
         "every one, and the result exports to Word.")
+
+    if st.session_state.store.loaded:
+        st.button(f"↩️ Continue: {st.session_state.store.current.title}",
+                  type="primary", on_click=_nav, args=("workspace",),
+                  help="Return to your open workspace — chart and chat are kept.")
+
     render_onboarding_setup()
+
+    st.divider()
+    st.caption("**For evaluators** — assignment deliverables")
+    c1, c2 = st.columns(2)
+    c1.button("🗺️ User flow diagram", use_container_width=True,
+              on_click=_nav, args=("diagram",),
+              help="The end-to-end analyst flow with all three edge cases")
+    c2.button("📄 Product requirements (PRD)", use_container_width=True,
+              on_click=_nav, args=("prd",),
+              help="One-page PRD: problem, stories, scope, decisions, metrics")
+
+
+def _render_analyzing() -> None:
+    ss = st.session_state
+    if not ss.store.loaded:
+        ss.view = "home"
+        st.rerun()
+    st.markdown(brand_header(""), unsafe_allow_html=True)
+    chart = ss.store.current
+    with st.status(f"Analyzing **{chart.title}**…", expanded=True) as status:
+        st.write(f"📑 Parsing claim chart — {len(chart.rows)} elements found")
+        time.sleep(0.5)
+        st.write(f"📚 Indexing evidence pool — {len(ss.docs)} document(s), "
+                 f"{sum(len(d.text) for d in ss.docs):,} characters")
+        time.sleep(0.5)
+        st.write("🔎 Scoring each element against the evidence…")
+        issues = analyze_chart(chart, ss.docs)
+        time.sleep(0.5)
+        status.update(label="Analysis complete", state="complete")
+    ss.chat.append(ChatMessage(role="assistant",
+                               content=analysis_summary(chart, issues)))
+    ss.view = "workspace"
+    st.rerun()
+
+
+def _render_workspace() -> None:
+    ss = st.session_state
+    if not ss.store.loaded:
+        ss.view = "home"
+        st.rerun()
+    _breadcrumb(f"Workspace — {ss.store.current.title}")
+    st.markdown(f"#### {ss.store.current.title}")
+
+    col_chat, col_doc = st.columns([0.35, 0.65], gap="medium")
+    with col_chat:
+        render_chat()
+    with col_doc:
+        tab_chart, tab_evidence, tab_settings = st.tabs(
+            ["📋 Claim chart", "📁 Evidence", "⚙️ Settings"])
+        with tab_chart:
+            render_toolbar()
+            render_chart(ss.store)
+        with tab_evidence:
+            render_evidence_tab()
+        with tab_settings:
+            render_settings_tab()
+
+
+def _render_doc_page(title: str, path: Path, kind: str) -> None:
+    _breadcrumb(title)
+    st.markdown(brand_header(""), unsafe_allow_html=True)
+    st.markdown(f"#### {title}")
+    if not path.exists():
+        st.info("This deliverable will be added here before submission.")
+        return
+    if kind == "image":
+        st.image(str(path), use_container_width=True)
+    else:
+        st.markdown(path.read_text(encoding="utf-8"))
 
 
 def main() -> None:
@@ -50,34 +152,19 @@ def main() -> None:
     inject_styles()
     _init_state()
 
-    if not st.session_state.store.loaded:
-        _render_onboarding()
-        return
-
-    # The chat input is pinned to the page bottom. A submitted message is
-    # queued and processed INSIDE the chat panel (spinner in place), which
-    # then triggers a rerun so the chart never renders stale.
-    prompt = st.chat_input("Ask iLumos to refine the chart… "
-                           '(e.g. "strengthen the evidence for element 2")')
-    if prompt and prompt.strip():
-        st.session_state.chat.append(ChatMessage(role="user", content=prompt.strip()))
-        st.session_state.pending_request = prompt.strip()
-
-    st.markdown(brand_header(""), unsafe_allow_html=True)
-    st.markdown(f"### {st.session_state.store.current.title}")
-    col_chart, col_right = st.columns([0.56, 0.44], gap="large")
-    with col_chart:
-        render_toolbar()
-        render_chart(st.session_state.store)
-    with col_right:
-        tab_chat, tab_evidence, tab_settings = st.tabs(
-            ["💬 Chat", "📁 Evidence", "⚙️ Settings"])
-        with tab_chat:
-            render_chat()
-        with tab_evidence:
-            render_evidence_tab()
-        with tab_settings:
-            render_settings_tab()
+    view = st.session_state.view
+    if view == "analyzing":
+        _render_analyzing()
+    elif view == "workspace":
+        _render_workspace()
+    elif view == "diagram":
+        _render_doc_page("User flow diagram",
+                         _DOCS_DIR / "diagrams" / "user_flow.png", "image")
+    elif view == "prd":
+        _render_doc_page("Product requirements document",
+                         _DOCS_DIR / "2_PRD.md", "markdown")
+    else:
+        _render_home()
 
 
 if __name__ == "__main__":
