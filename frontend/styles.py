@@ -45,22 +45,22 @@ h1, h2, h3, h4, h5, h6 {
 .badge-confidence { background: #f3e8fd; color: #6d28b8; }
 .badge-updated  { background: #ede4fb; color: #6d28b8; }
 
-/* ---------- claim chart table ---------- */
+/* ---------- claim chart table (dense: more content per screen) ---------- */
 .chart-wrap { overflow-x: auto; border-radius: 10px;
   box-shadow: 0 1px 4px rgba(16,16,19,.08); }
 table.claim-chart {
-  width: 100%; border-collapse: collapse; font-size: 0.86rem;
+  width: 100%; border-collapse: collapse; font-size: 0.78rem;
   table-layout: fixed;
 }
 table.claim-chart th {
   background: #101013; color: #ffffff; text-align: left;
-  padding: 10px 12px; font-size: 0.74rem; letter-spacing: .05em;
+  padding: 7px 10px; font-size: 0.66rem; letter-spacing: .05em;
   text-transform: uppercase; font-weight: 700;
   border-bottom: 3px solid #b16cea;
 }
 table.claim-chart td {
-  border: 1px solid #e6e0ee; padding: 9px 12px; vertical-align: top;
-  line-height: 1.45; color: #1a1a21; background: #ffffff;
+  border: 1px solid #e6e0ee; padding: 6px 10px; vertical-align: top;
+  line-height: 1.4; color: #1a1a21; background: #ffffff;
   overflow-wrap: break-word;
 }
 table.claim-chart td.cell-changed {
@@ -69,9 +69,33 @@ table.claim-chart td.cell-changed {
 table.claim-chart tr.row-added td {
   background: #f7f0fa; box-shadow: inset 3px 0 0 #b16cea;
 }
-table.claim-chart td.col-num { width: 34px; text-align: center; color: #575757;
+table.claim-chart td.col-num { width: 30px; text-align: center; color: #575757;
   background: #f7f0fa; font-weight: 700; font-family: 'Trispace', monospace; }
-table.claim-chart td.col-strength { width: 96px; }
+table.claim-chart td.col-strength { width: 84px; }
+
+/* ---------- workspace panes: viewport-fit, each scrolls internally -------- */
+.block-container { padding-top: 1.4rem; padding-bottom: 0.6rem; }
+
+/* left pane: chat history card, input fused to its bottom edge */
+div.st-key-chat_history {
+  height: calc(100vh - 380px) !important; min-height: 320px;
+  border: 1px solid #e6e0ee !important;
+  border-bottom: none !important;
+  border-radius: 12px 12px 0 0 !important;
+  background: #ffffff;
+}
+.st-key-chat_pane [data-testid="stChatInput"] {
+  margin-top: -16px;                     /* close the block gap → one card */
+  border: 1px solid #e6e0ee; border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 8px; background: #ffffff;
+}
+
+/* right pane: the document view scrolls inside its own container */
+div.st-key-doc_pane {
+  height: calc(100vh - 330px) !important; min-height: 360px;
+  border: none !important;
+}
 
 /* ---------- suggestion cards ---------- */
 .sug-head { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px;

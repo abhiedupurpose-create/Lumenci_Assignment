@@ -126,7 +126,8 @@ def _render_workspace() -> None:
             ["📋 Claim chart", "📁 Evidence", "⚙️ Settings"])
         with tab_chart:
             render_toolbar()
-            render_chart(ss.store)
+            with st.container(height=560, key="doc_pane", border=False):
+                render_chart(ss.store)
         with tab_evidence:
             render_evidence_tab()
         with tab_settings:

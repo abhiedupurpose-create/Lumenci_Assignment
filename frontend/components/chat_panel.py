@@ -203,28 +203,30 @@ def _process_pending() -> None:
 
 
 def render_chat() -> None:
-    """The full chat pane: history, suggestion cards, and the input box —
-    all inside the pane so the input is always visible next to the chat."""
-    st.markdown("##### 💬 Refinement chat")
-    box = st.container(height=520)
-    with box:
-        if not st.session_state.chat:
-            st.info(
-                'Ask me to refine the chart. Try: **"Strengthen the evidence '
-                'for element 3"** · **"The reasoning for element 3 is weak — '
-                'add technical detail"** · **"undo"**')
-        for msg in st.session_state.chat:
-            avatar = "🧑‍⚖️" if msg.role == "user" else "✨"
-            with st.chat_message(msg.role, avatar=avatar):
-                st.markdown(msg.content)
-                for sug in msg.suggestions:
-                    _render_suggestion(sug)
-        _process_pending()
+    """The full chat pane: history, suggestion cards, and the input box fused
+    into one card (keyed containers are styled in frontend/styles.py — the
+    history scrolls internally, the input sits on its bottom edge)."""
+    with st.container(key="chat_pane"):
+        st.caption("💬 **Refinement chat**")
+        box = st.container(height=520, key="chat_history")
+        with box:
+            if not st.session_state.chat:
+                st.info(
+                    'Ask me to refine the chart. Try: **"Strengthen the evidence '
+                    'for element 3"** · **"The reasoning for element 3 is weak — '
+                    'add technical detail"** · **"undo"**')
+            for msg in st.session_state.chat:
+                avatar = "🧑‍⚖️" if msg.role == "user" else "✨"
+                with st.chat_message(msg.role, avatar=avatar):
+                    st.markdown(msg.content)
+                    for sug in msg.suggestions:
+                        _render_suggestion(sug)
+            _process_pending()
 
-    prompt = st.chat_input(
-        'Ask for a refinement… e.g. "strengthen element 3"', key="chat_box")
-    if prompt and prompt.strip():
-        st.session_state.chat.append(
-            ChatMessage(role="user", content=prompt.strip()))
-        st.session_state.pending_request = prompt.strip()
-        st.rerun()
+        prompt = st.chat_input(
+            'Ask for a refinement… e.g. "strengthen element 3"', key="chat_box")
+        if prompt and prompt.strip():
+            st.session_state.chat.append(
+                ChatMessage(role="user", content=prompt.strip()))
+            st.session_state.pending_request = prompt.strip()
+            st.rerun()
