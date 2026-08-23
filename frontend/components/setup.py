@@ -11,7 +11,8 @@ import streamlit as st
 from backend.models import ChatMessage, DocFile
 from backend.parsers import (ChartParseError, fetch_url_as_doc,
                              parse_claim_chart, parse_product_doc)
-from backend.sample_data import load_sample, sample_names
+from backend.sample_data import (DEFAULT_SYSTEM_PROMPT, load_sample,
+                                 sample_names)
 
 
 def _say(text: str) -> None:
@@ -47,6 +48,15 @@ def _load_sample_case() -> None:
 def _remove_doc(name: str) -> None:
     st.session_state.docs = [d for d in st.session_state.docs if d.name != name]
     _say(f"🗑️ Removed **{name}** from the evidence pool.")
+
+
+def _save_instructions() -> None:
+    st.session_state.system_prompt = st.session_state.get("system_prompt_input", "")
+
+
+def _reset_instructions() -> None:
+    st.session_state.system_prompt = DEFAULT_SYSTEM_PROMPT
+    st.session_state.pop("system_prompt_input", None)
 
 
 def _fetch_url() -> None:
@@ -134,13 +144,25 @@ def render_onboarding_setup() -> None:
                  "evidence found verbatim in these documents.")
         _handle_doc_uploads("doc_upload_onboarding")
 
-    with st.expander("⚙️ Advanced — analyst instructions (system prompt)"):
+    with st.expander("🧠 AI instructions — how the assistant behaves"):
+        st.caption(
+            "These are the standing rules the AI follows on every request: cite "
+            "only verbatim quotes from your documents, never invent evidence, "
+            "escalate when evidence is missing, note claim-construction risk. "
+            "Edit them to change its behavior for this session — e.g. add "
+            "*“flag §112 enablement risks in every rationale”* or *“write "
+            "reasoning in UK English”*.")
+        # The widget key is separate from the master value: widget state gets
+        # cleaned up when this view isn't rendered, the master never does.
         st.text_area(
-            "Instructions sent to the AI with every message", key="system_prompt",
-            height=200,
-            help="The AI's standing instructions: role, evidence rules, legal "
-                 "tone. Defaults are maintained in the repo's prompts/ folder — "
-                 "edit here to override for this session.")
+            "AI instructions", value=st.session_state.system_prompt,
+            key="system_prompt_input", on_change=_save_instructions, height=220,
+            label_visibility="collapsed",
+            help="Sent to the AI with every message. Defaults are maintained "
+                 "in the repo's prompts/ folder.")
+        st.button("Reset to defaults", on_click=_reset_instructions,
+                  help="Discard session edits and restore the standard "
+                       "instructions.")
 
 
 # ---------------------------------------------------------------------------
