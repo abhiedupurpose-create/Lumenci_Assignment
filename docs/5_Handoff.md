@@ -78,12 +78,14 @@ reviewable files in `prompts/` — edit them there, not in code.
 **0:00–0:55 — User flow (share the diagram on screen)**
 > "iLumos lets a patent analyst refine a claim chart conversationally. The analyst uploads
 > the chart and the product documents that serve as evidence, sets instructions, and gets
-> the three-column chart on screen. Every chat request goes through a grounding gate —
-> suggestions must cite verbatim quotes from the uploaded documents. The analyst accepts,
-> modifies, or rejects each suggestion; accepted changes are highlighted and versioned.
-> Three edge cases are designed in: wrong evidence gets corrected through chat; any
-> refinement can be undone; and when no evidence exists, the AI asks for documentation or
-> a URL instead of inventing a quote. The final chart exports to Word with a change log."
+> the three-column chart on screen — with an initial AI analysis that flags weak evidence.
+> Every chat request goes through a grounding gate — suggestions must cite verbatim quotes
+> from the uploaded documents. The analyst accepts, modifies, or rejects each suggestion;
+> accepted changes are highlighted and versioned. Three edge cases are designed in: wrong
+> evidence gets corrected through chat — the AI discards the bad source and re-searches
+> the rest; any refinement can be undone, and every version can be viewed or restored;
+> and when no evidence exists, the AI asks for documentation or a URL instead of inventing
+> a quote. The final chart exports to Word with a change log."
 
 **0:55–2:50 — Prototype demo (share the app)**
 1. *(0:55)* Home screen → point at the **AI instructions** panel (the no-fabrication rules — "enforced downstream by the grounding checker") → pick a case from the **sample dropdown** → **Load sample case** → the **analysis screen** flags weak elements automatically.
