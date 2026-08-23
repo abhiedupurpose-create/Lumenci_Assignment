@@ -12,9 +12,14 @@ cp .env.example .env          # then paste your API key into .env
 streamlit run streamlit_app.py
 ```
 
-- No key in `.env`? The app starts in **Demo mode** automatically — the full loop works.
-- Verify health any time:
-  `python scripts/smoke_test.py` (backend) and `python scripts/ui_test.py` (UI) — both should end with `ALL PASSED`.
+- ⚠️ **Always launch from inside the venv** (`source .venv/bin/activate` first, or
+  `.venv/bin/streamlit run streamlit_app.py`) — a global Streamlit lacks the project
+  dependencies and features like Word export will be unavailable.
+- No key in `.env`? The scripted demo engine answers automatically (labeled in chat) —
+  the full loop still works.
+- Verify health any time: `python scripts/smoke_test.py` (backend), `python
+  scripts/ui_test.py` (UI), and `python scripts/live_test.py` (3 real API calls) —
+  all should end with `ALL PASSED` / `LIVE TEST PASSED`.
 
 ## 2. Configure gpt-5.6-luna
 
@@ -24,9 +29,11 @@ streamlit run streamlit_app.py
 | `OPENAI_BASE_URL` | leave **empty** for the official OpenAI API; set your gateway URL (e.g. `https://openrouter.ai/api/v1`) if the key is for an OpenAI-compatible proxy |
 | `ILUMOS_MODEL` | `gpt-5.6-luna` (already the default) |
 
-Quick sanity check after setting the key: turn **Demo mode off** in the sidebar, send
-"Strengthen the evidence for element 2" on the sample chart, and confirm a suggestion card
-appears with verified citations. Failure modes are graceful, never crashes: if the endpoint
+Quick sanity check after setting the key: run `python scripts/live_test.py` (3 real API
+calls with pass/fail checks), or load a sample case in the app, send "Strengthen the
+evidence for element 2", and confirm a suggestion card appears with verified citations.
+(With a key configured the live engine is used automatically; without one, the scripted
+demo engine answers and says so in chat.) Failure modes are graceful, never crashes: if the endpoint
 rejects `response_format` (or times out), the error surfaces as a chat message with
 retry/Demo-mode options; if the model returns non-JSON text, the app shows it as a plain
 reply. Either way, suggestion cards need a JSON-capable endpoint. All LLM prompts are
@@ -79,11 +86,11 @@ reviewable files in `prompts/` — edit them there, not in code.
 > a URL instead of inventing a quote. The final chart exports to Word with a change log."
 
 **0:55–2:50 — Prototype demo (share the app)**
-1. *(0:55)* Onboarding screen → point at the 3 setup steps → click **Load sample chart & docs**. Mention the system-prompt panel and that a custom chart/docs upload works the same way.
+1. *(0:55)* Onboarding screen → pick a case from the **sample dropdown** → **Load sample case**. Mention custom chart/doc uploads work the same way, and analyst instructions live under Settings → Advanced.
 2. *(1:15)* Send the assignment's example: **"The AI reasoning for the ML algorithm element is weak — add more technical details."** Show the suggestion card: before/after diff, rationale, confidence, **✓ quotes verified in docs**.
-3. *(1:45)* Click **Accept** → chart cells highlight green, version counter ticks, sidebar acceptance metrics update. Open "What changed".
-4. *(2:05)* Send **"You missed that Acme also has a temperature sensor array"** → Accept the new row (blue highlight).
-5. *(2:20)* Type **"undo"** → chart reverts. Then send **"Strengthen the evidence that the thermostat uses homomorphic encryption"** → AI asks for documentation/URL instead of inventing evidence — point at the URL fetch box in the sidebar.
+3. *(1:45)* Click **Accept** → chart cells highlight green, version counter ticks. Open "What changed". (Session metrics live under Settings.)
+4. *(2:05)* Send **"You missed that Acme also has a temperature sensor array"** → Accept the new row (highlighted). *(Tip: demo mode adds a row deterministically; the live model may propose a revision instead — both are fine to show.)*
+5. *(2:20)* Type **"undo"** → chart reverts. Then send **"Strengthen the evidence that the thermostat uses homomorphic encryption"** → AI asks for documentation/URL instead of inventing evidence — show the URL fetch box in the **Evidence tab**.
 6. *(2:40)* Click **Export to Word**, open the .docx, show the chart + change-log appendix. Close: "Human-approved, evidence-grounded, export-ready."
 
 ## 6. Submission checklist

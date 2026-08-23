@@ -17,7 +17,11 @@ cp .env.example .env    # add your API key (optional — demo mode works without
 streamlit run streamlit_app.py
 ```
 
-Click **Load sample chart & docs** in the sidebar, then try:
+> ⚠️ Always launch from inside the venv (`source .venv/bin/activate` first, or use
+> `.venv/bin/streamlit run streamlit_app.py`) — a globally-installed Streamlit won't
+> have the project's dependencies.
+
+Pick a **sample case** from the dropdown (three ready-made infringement cases), then try:
 *"The AI reasoning for the ML algorithm element is weak — add more technical details."*
 
 ## Structure

@@ -41,11 +41,11 @@ at = AppTest.from_file(str(Path(__file__).resolve().parent.parent / "streamlit_a
 at.run()
 no_exception(at, "initial load")
 check("demo mode auto-on without key", at.session_state["demo_mode"] is True)
-check("onboarding shown before chart load",
-      any("Fastest path" in str(el.value) for el in at.info))
+check("onboarding offers sample dropdown",
+      any("sample" in (sb.label or "").lower() for sb in at.selectbox))
 
-# Load the sample chart + docs
-sample_btn = next(b for b in at.sidebar.button if "sample" in b.label.lower())
+# Load a sample case from the onboarding dropdown (default = Acme thermostat)
+sample_btn = next(b for b in at.main.button if "sample" in b.label.lower())
 sample_btn.click()
 at.run()
 no_exception(at, "sample load")
@@ -84,6 +84,18 @@ no_exception(at, "needs-input path")
 last = at.session_state["chat"][-1]
 check("needs-input card asks for doc/URL",
       bool(last.suggestions) and last.suggestions[0].action == "needs_input")
+
+# Switch to a different sample case from the Settings tab
+picker = next(s for s in at.selectbox if s.key == "sample_choice")
+picker.set_value("VoltEdge E-Scooter — US789012")
+at.run()
+switch_btn = next(b for b in at.main.button if "sample" in b.label.lower())
+switch_btn.click()
+at.run()
+no_exception(at, "sample switch")
+check("sample switcher loads the new case",
+      "VoltEdge" in at.session_state["store"].current.title
+      and len(at.session_state["docs"]) == 2)
 
 print()
 if FAILURES:
